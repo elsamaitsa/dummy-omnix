@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="author" content="Deri Komara, IT" />
+    <meta
+      name="description"
+      content="Omnix makes agent, sales, marketing, IT, customer service engagement platform for all size of businesses. It is easy to use and scalable to your business needs."
+    />
+    <title>Omnix</title>
+    <!-- <script src="<%= process.env.BASE_URL %>/js/config.min.js"></script> -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.flexmonster.com/flexmonster.min.css?2020-09-23"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="<%= process.env.ASSET_URL %>/css/suneditor.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+      @import url("<%= process.env.ASSET_URL %>/css/emoji-mart.css");
+
+      * {
+        font-family: "Lato", sans-serif !important;
+        -webkit-text-size-adjust: none;
+        -webkit-text-size-adjust: auto;
+      }
+
+      @media only screen and (max-width: 600px) {
+        #root,
+        body,
+        html {
+          overflow-x: hidden;
+          overflow-y: scroll;
+        }
+      }
+
+      @media only screen and (min-width: 600px) {
+        #root,
+        body,
+        html {
+          height: 100%;
+          overflow: hidden;
+        }
+      }
+
+      ::placeholder {
+        font-size: 12px !important;
+      }
+
+      .ReactModal__Overlay {
+        z-index: 10000 !important;
+      }
+
+      tgs-player {
+        width: 100% !important;
+        height: 200px !important;
+      }
+
+      .tox-anchorbar {
+        border-bottom: 1px solid #cccccc !important;
+      }
+
+      ::-webkit-scrollbar {
+        width: 5px !important;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #7b7d7f;
+        border-radius: 10rem;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-button {
+        width: 10px;
+        height: 10px;
+      }
+
+      .sound-wave {
+        width: 100%;
+      }
+    </style>
+    <link
+      rel="icon"
+      type="image/png"
+      href="<%= process.env.ASSET_URL %>/images/favicon.png"
+    />
+    <!--
+    Remove this if you only support browsers that support async/await.
+    This is needed by babel to share largeish helper code for compiling async/await in older
+    browsers. More information at https://github.com/single-spa/create-single-spa/issues/112
+  -->
+    <script src="<%= process.env.ASSET_URL %>/js/vendors/runtime.min.js"></script>
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/chart.min.js"
+      preload
+    ></script>
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/axios.min.js"
+      preload
+    ></script>
+    <!-- <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/tgs-player.js"></script> -->
+    <!-- <script src="https://cdn.tiny.cloud/1/mzvdejwajyutf63r49uxi3bq08cj1m3wbyk34r3hhe8om1cu/tinymce/5/tinymce.min.js"></script> -->
+    <!-- <script src="<%= process.env.ASSET_URL %>/js/vendors/redux.js" preload></script> -->
+    <!-- <script src="https://unpkg.com/react-redux@7.2.6/dist/react-redux.min.js" preload ></script> -->
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/redux-saga.umd.min.js"
+      preload
+    ></script>
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/crypto-js.min.js"
+      preload
+    ></script>
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/moment.min.js"
+      preload
+    ></script>
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/socket.io.min.js"
+      preload
+    ></script>
+    <script
+      src="<%= process.env.ASSET_URL %>/js/vendors/routes.js?v=<%= process.env.VERSION %>"
+      preload
+    ></script>
+    <!-- <script src="https://onx.co.id/ctd/webphone_api.js"></script> -->
+    <!--
+    This CSP allows any SSL-enabled host and for arbitrary eval(), but you should limit these directives further to increase your app's security.
+    Learn more about CSP policies at https://content-security-policy.com/#directive
+  -->
+    <!-- <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' https: localhost:*; script-src 'unsafe-inline' 'unsafe-eval' https: localhost:*; connect-src https: localhost:* ws://localhost:* ws://api-dev.onx.co.id:* ws://ami.onx.co.id:*; style-src 'unsafe-inline' https:; object-src 'none';" /> -->
+    <meta name="importmap-type" content="systemjs-importmap" />
+    <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
+    <!-- More info at https://github.com/joeldenning/import-map-overrides/blob/master/docs/configuration.md#domain-list -->
+    <!-- <meta name="import-map-overrides-domains" content="denylist:prod.example.com" /> -->
+
+    <!-- Shared dependencies go into this import map. Your shared dependencies must be of one of the following formats:
+
+    1. System.register (preferred when possible) - https://github.com/systemjs/systemjs/blob/master/docs/system-register.md
+    2. UMD - https://github.com/umdjs/umd
+    3. Global variable
+
+    More information about shared dependencies can be found at https://single-spa.js.org/docs/recommended-setup#sharing-with-import-maps.
+  -->
+    <% if (isLocal) { %>
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "single-spa": "<%= process.env.ASSET_URL %>/js/vendors/single-spa.min.js",
+          "react": "<%= process.env.ASSET_URL %>/js/vendors/react.development.js",
+          "react-dom": "<%= process.env.ASSET_URL %>/js/vendors/react-dom.development.js",
+          "@mui/material": "<%= process.env.ASSET_URL %>/js/vendors/material-ui.production.min.js",
+          "react-redux": "<%= process.env.ASSET_URL %>/js/vendors/react-redux.min.js",
+          "lodash": "<%= process.env.ASSET_URL %>/js/vendors/lodash.min.js",
+          "yup": "<%= process.env.ASSET_URL %>/js/vendors/yup-umd.js",
+          "formik": "<%= process.env.ASSET_URL %>/js/vendors/formik-umd.js",
+          "redux": "<%= process.env.ASSET_URL %>/js/vendors/redux-umd.js",
+          "emoji-mart": "<%= process.env.ASSET_URL %>/js/vendors/emoji-mart-umd.js",
+          "react-mic": "<%= process.env.ASSET_URL %>/js/vendors/react-mic-umd.js"
+        }
+      }
+    </script>
+    <% } else { %>
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "single-spa": "<%= process.env.ASSET_URL %>/js/vendors/single-spa.min.js",
+          "react": "<%= process.env.ASSET_URL %>/js/vendors/react.production.min.js",
+          "react-dom": "<%= process.env.ASSET_URL %>/js/vendors/react-dom.production.min.js",
+          "@mui/material": "<%= process.env.ASSET_URL %>/js/vendors/material-ui.production.min.js",
+          "react-redux": "<%= process.env.ASSET_URL %>/js/vendors/react-redux.min.js",
+          "lodash": "<%= process.env.ASSET_URL %>/js/vendors/lodash.min.js",
+          "yup": "<%= process.env.ASSET_URL %>/js/vendors/yup-umd.js",
+          "formik": "<%= process.env.ASSET_URL %>/js/vendors/formik-umd.js",
+          "redux": "<%= process.env.ASSET_URL %>/js/vendors/redux-umd.js",
+          "emoji-mart": "<%= process.env.ASSET_URL %>/js/vendors/emoji-mart-umd.js",
+          "react-mic": "<%= process.env.ASSET_URL %>/js/vendors/react-mic-umd.js"
+        }
+      }
+    </script>
+    <% } %>
+    <script preload>
+      window.BASE_URL = "<%= process.env.BASE_URL %>";
+      window.ASSET_URL}${tenantSetting?tenantSetting.custom_path : "/" = "<%= process.env.ASSET_URL %>";
+      window.API_URL = "<%= process.env.API_URL %>";
+      window.VERSION = "<%= process.env.VERSION %>";
+      window.FLEXMONSTER_KEY = "<%= process.env.FLEXMONSTER_KEY %>";
+      window.BASE_THEME = {
+        typography: {
+          fontFamily: "'Lato', sans-serif",
+          h1: {
+            fontSize: "2.5em",
+            fontWeight: "600",
+          },
+          h2: {
+            fontSize: "2em",
+            fontWeight: "600",
+          },
+          h3: {
+            fontSize: "1.5em",
+            fontWeight: "600",
+          },
+          h4: {
+            fontSize: "1.25em",
+            fontWeight: "600",
+          },
+          h5: {
+            fontSize: "1.1em",
+            fontWeight: "600",
+          },
+          h6: {
+            fontSize: "0.9em",
+            fontWeight: "600",
+          },
+          body1: {
+            fontSize: "0.9em",
+          },
+          body2: {
+            fontSize: "0.8em",
+          },
+          button: {
+            textTransform: "inherit",
+            fontSize: "0.65rem",
+          },
+        },
+        palette: {
+          primary: {
+            light: "#6E5FC9",
+            main: "#4F3EB7",
+            dark: window.BASE_THEME.palette.primary.dark,
+            contrastText: "#fff",
+          },
+          secondary: {
+            light: "#D644EE",
+            main: "#CC15EA",
+            dark: "#A311BB",
+            contrastText: "#fff",
+          },
+          success: {
+            light: "#09E744",
+            main: "#07B636",
+            dark: "#058527",
+            contrastText: "#fff",
+          },
+          warning: {
+            light: "#FFC550",
+            main: "#FFB41F",
+            dark: "#EB9C00",
+            contrastText: "#171717",
+          },
+          error: {
+            light: "#FA5E51",
+            main: "#F93020",
+            dark: "#DF1706",
+            contrastText: "#fff",
+          },
+          text: {
+            primary: "#2D2D2D",
+            secondary: window.BASE_THEME.palette.primary.dark,
+            disabled: "#91989C",
+          },
+        },
+        components: {
+          MuiButton: {
+            defaultProps: {
+              disableElevation: 0,
+              size: "small",
+            },
+            styleOverrides: {
+              outlinedPrimary: {
+                backgroundColor: "#F7EDFD",
+                border: "1.5px solid #3F3192",
+                fontSize: "0.7em",
+                "&:hover": {
+                  border: "1.5px solid #3F3192",
+                  backgroundColor: "#f1dcfd",
+                },
+              },
+              containedPrimary: {
+                fontSize: "0.75em",
+              },
+              containedSecondary: {
+                fontSize: "0.75em",
+              },
+              containedWarning: {
+                fontSize: "0.75em",
+              },
+              containedError: {
+                fontSize: "0.75em",
+              },
+            },
+          },
+          MuiTextField: {
+            defaultProps: {
+              size: "small",
+              margin: "dense",
+            },
+          },
+        },
+      };
+    </script>
+    <div
+      style="
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        background: #3f3192;
+        font-size: 12px;
+        padding: 5px;
+        color: #fff;
+        font-weight: bold;
+      "
+    >
+      Version: <%= process.env.VERSION %>
+    </div>
+
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "@onx/login": "http://localhost:1000/onx-login.js",
+          "@onx/change-password-expired": "http://localhost:1001/onx-change-password-expired.js",
+          "@onx/forgot-password": "http://localhost:1002/onx-forgot-password.js",
+          "@onx/update-profile": "http://localhost:1003/onx-update-profile.js",
+          "@onx/auks-form": "http://localhost:1004/onx-auks-form.js",
+          "@onx/auks-form-login": "http://localhost:1005/onx-auks-form-login.js",
+          "@onx/dashboard": "http://localhost:9050/onx-dashboard.js",
+          "@onx/sidebar": "http://localhost:2005/onx-sidebar.js",
+          "@onx/base-modal": "http://localhost:2000/onx-base-modal.js",
+          "@onx/base-alert": "http://localhost:2007/onx-base-alert.js",
+          "@onx/journey": "http://localhost:2006/onx-journey.js",
+          "@onx/service-journey-ticket": "http://localhost:8517/onx-service-journey-ticket.js",
+          "@onx/dashboard-header": "http://localhost:9002/onx-dashboard-header.js",
+          "@onx/dashboard-agent-perfomance": "http://localhost:9001/onx-dashboard-agent-perfomance.js",
+          "@onx/dashboard-status-ticket": "http://localhost:9004/onx-dashboard-status-ticket.js",
+          "@onx/dashboard-summary-channel": "http://localhost:9005/onx-dashboard-summary-channel.js",
+          "@onx/dashboard-interval-channel": "http://localhost:9003/onx-dashboard-interval-channel.js",
+          "@onx/customer": "http://localhost:3000/onx-customer.js",
+          "@onx/customer-list": "http://localhost:3002/onx-customer-list.js",
+          "@onx/customer-detail": "http://localhost:3001/onx-customer-detail.js",
+          "@onx/service": "http://localhost:4000/onx-service.js",
+          "@onx/service-body-header": "http://localhost:4007/onx-service-body-header.js",
+          "@onx/service-sidebar": "http://localhost:4015/onx-service-sidebar.js",
+          "@onx/service-sidebar-voice": "http://localhost:4029/onx-service-sidebar-voice.js",
+          "@onx/service-list-item": "http://localhost:4013/onx-service-list-item.js",
+          "@onx/service-body": "http://localhost:4005/onx-service-body.js",
+          "@onx/service-body-history": "http://localhost:4023/onx-service-body-history.js",
+          "@onx/service-detail-case": "http://localhost:4024/onx-service-detail-case.js",
+          "@onx/service-body-rtc": "http://localhost:4008/onx-service-body-rtc.js",
+          "@onx/service-body-email": "http://localhost:4006/onx-service-body-email.js",
+          "@onx/service-body-email-history": "http://localhost:4025/onx-service-body-email-history.js",
+          "@onx/service-body-voice": "http://localhost:4009/onx-service-body-voice.js",
+          "@onx/service-body-twitter": "http://localhost:4022/onx-service-body-twitter.js",
+          "@onx/service-body-twitter-history": "http://localhost:4026/onx-service-body-twitter-history.js",
+          "@onx/service-aside-customer-profile": "http://localhost:4099/onx-service-aside-customer-profile.js",
+          "@onx/service-aside-ticket": "http://localhost:4004/onx-service-aside-ticket.js",
+          "@onx/service-aside-case": "http://localhost:4002/onx-service-aside-case.js",
+          "@onx/service-footer": "http://localhost:4012/onx-service-footer.js",
+          "@onx/service-aside": "http://localhost:4001/onx-service-aside.js",
+          "@onx/service-merge-customer": "http://localhost:4014/onx-service-merge-customer.js",
+          "@onx/service-edit-customer": "http://localhost:4011/onx-service-edit-customer.js",
+          "@onx/service-sidebar-channel": "http://localhost:4017/onx-service-sidebar-channel.js",
+          "@onx/service-aside-customer-search": "http://localhost:4018/onx-service-aside-customer-search.js",
+          "@onx/service-body-email-reply": "http://localhost:4019/onx-service-body-email-reply.js",
+          "@onx/service-body-feed": "http://localhost:4020/onx-service-body-feed.js",
+          "@onx/service-body-feed-history": "http://localhost:4028/onx-service-body-feed-history.js",
+          "@onx/service-body-facebook": "http://localhost:4021/onx-service-body-facebook.js",
+          "@onx/service-body-facebook-history": "http://localhost:4027/onx-service-body-facebook-history.js",
+          "@onx/onx-drawer-journey-interactions": "http://localhost:8083/onx-drawer-journey-interactions.js",
+          "@onx/ticketing": "http://localhost:8534/onx-ticketing.js",
+          "@onx/ticketing-body": "http://localhost:8535/onx-ticketing-body.js",
+          "@onx/ticketing-detail-activities": "http://localhost:8536/onx-ticketing-detail-activities.js",
+          "@onx/ticketing-detail-additional": "http://localhost:8537/onx-ticketing-detail-additonal.js",
+          "@onx/ticketing-detail-header": "http://localhost:8538/onx-ticketing-detail-header.js",
+          "@onx/ticketing-detail-stage": "http://localhost:8544/onx-ticketing-detail-stage.js",
+          "@onx/ticketing-header": "http://localhost:8539/onx-ticketing-header.js",
+          "@onx/ticketing-history-item": "http://localhost:8540/onx-ticketing-history-item.js",
+          "@onx/ticketing-list-item": "http://localhost:8541/onx-ticketing-list-item.js",
+          "@onx/ticketing-sidebar": "http://localhost:8542/onx-ticketing-sidebar.js",
+          "@onx/ticketing-tab": "http://localhost:8543/onx-ticketing-tab.js",
+          "@onx/ticketing-service-journey": "http://localhost:8545/onx-ticketing-service-journey.js",
+          "@onx/log": "http://localhost:5000/onx-log.js",
+          "@onx/log-sidebar": "http://localhost:5003/onx-log-sidebar.js",
+          "@onx/log-list-item": "http://localhost:5004/onx-log-list-item.js",
+          "@onx/log-journey": "http://localhost:5005/onx-log-journey.js",
+          "@onx/log-ticket": "http://localhost:5006/onx-log-ticket.js",
+          "@onx/log-ticket-list-item": "http://localhost:5007/onx-log-ticket-list-item.js",
+          "@onx/outbound": "http://localhost:9500/onx-outbound.js",
+          "@onx/outbound-call": "http://localhost:9501/onx-outbound-call.js",
+          "@onx/outbound-detail": "http://localhost:9502/onx-outbound-detail.js",
+          "@onx/outbound-profile": "http://localhost:9503/onx-outbound-profile.js",
+          "@onx/outbound-sidebar": "http://localhost:9504/onx-outbound-sidebar.js",
+          "@onx/outbound-transfer": "http://localhost:9505/onx-outbound-transfer.js",
+          "@onx/log-ticket-sidebar": "http://localhost:5508/onx-log-ticket-sidebar.js",
+          "@onx/admin-service": "http://localhost:6999/onx-admin-service.js",
+          "@onx/admin-service-sidebar": "http://localhost:7001/onx-admin-service-sidebar.js",
+          "@onx/admin-service-aux": "http://localhost:7002/onx-admin-service-aux.js",
+          "@onx/admin-service-custome-report": "http://localhost:7003/onx-admin-service-custome-report.js",
+          "@onx/admin-service-information": "http://localhost:7004/onx-admin-service-information.js",
+          "@onx/admin-service-category": "http://localhost:7005/onx-admin-service-category.js",
+          "@onx/admin-service-subcategory": "http://localhost:7006/onx-admin-service-subcategory.js",
+          "@onx/admin-service-custome-field": "http://localhost:7007/onx-admin-service-custome-field.js",
+          "@onx/admin-service-template-message": "http://localhost:7008/onx-admin-service-tempalate-message.js",
+          "@onx/admin-service-group-skill": "http://localhost:7009/onx-admin-service-group-skill.js",
+          "@onx/admin-service-filter-rule": "http://localhost:7010/onx-admin-service-filter-rule.js",
+          "@onx/admin-service-parking-interaction": "http://localhost:7011/onx-admin-service-parking-interaction.js",
+          "@onx/admin-service-threshold": "http://localhost:7012/onx-admin-service-threshold.js",
+          "@onx/admin-service-user": "http://localhost:7013/onx-admin-service-user.js",
+          "@onx/admin-service-skill-setting": "http://localhost:7014/onx-admin-service-skill-setting.js",
+          "@onx/admin-service-group": "http://localhost:7015/onx-admin-service-group.js",
+          "@onx/admin-service-group-detail": "http://localhost:7016/onx-admin-service-group-detail.js",
+          "@onx/admin-service-unit": "http://localhost:7017/onx-admin-service-unit.js",
+          "@onx/admin-service-whitelist": "http://localhost:7018/onx-admin-service-whitelist.js",
+          "@onx/admin-service-status": "http://localhost:7019/onx-admin-service-status.js",
+          "@onx/admin-service-status-level": "http://localhost:7020/onx-admin-service-status-level.js",
+          "@onx/admin-service-status-next": "http://localhost:7021/onx-admin-service-status-next.js",
+          "@onx/admin-service-ticket": "http://localhost:7022/onx-admin-service-ticket.js",
+          "@onx/admin-service-setting-account": "http://localhost:7023/onx-admin-service-setting-account.js",
+          "@onx/admin-service-ticket-notification": "http://localhost:7024/onx-admin-service-ticket-notification.js",
+          "@onx/admin-report-service-ticket": "http://localhost:7030/onx-admin-report-service-ticket.js",
+          "@onx/admin-report-service-interaction": "http://localhost:7031/onx-admin-report-service-interaction.js",
+          "@onx/admin-sales": "http://localhost:7050/onx-admin-sales.js",
+          "@onx/admin-sales-sidebar": "http://localhost:7051/onx-admin-sales-sidebar.js",
+          "@onx/admin-sales-campaign": "http://localhost:7053/onx-admin-sales-campaign.js",
+          "@onx/admin-sales-distribusi-data": "http://localhost:7054/onx-admin-sales-distribusi-data.js",
+          "@onx/admin-sales-product": "http://localhost:7049/onx-admin-sales-product.js",
+          "@onx/admin-sales-upload-data": "http://localhost:7063/onx-admin-sales-upload-data.js",
+          "@onx/admin-sales-product": "http://localhost:7049/onx-admin-sales-product.js",
+          "@onx/admin-sales-list-call": "http://localhost:7052/onx-admin-sales-list-call.js",
+          "@onx/admin-sales-recontest-data": "http://localhost:7059/onx-admin-sales-recontest-data.js",
+          "@onx/admin-sales-status-call": "http://localhost:7060/onx-admin-sales-status-call.js",
+          "@onx/admin-sales-reason-call": "http://localhost:7061/onx-admin-sales-reason-call.js",
+          "@onx/admin-sales-subreason-call": "http://localhost:7062/onx-admin-sales-subreason-call.js",
+          "@onx/marketers": "http://localhost:7701/onx-marketers.js",
+          "@onx/admin-dashboard": "http://localhost:3050/onx-admin-dashboard.js",
+          "@onx/admin-dashboard-marketers": "http://localhost:3053/onx-admin-dashboard-marketers.js",
+          "@onx/admin-dashboard-sales": "http://localhost:3052/onx-admin-dashboard-sales.js",
+          "@onx/admin-dashboard-service": "http://localhost:3051/onx-admin-dashboard-service.js",
+          "@onx/marketers-sidebar": "http://localhost:7702/onx-marketers-sidebar.js",
+          "@onx/marketers-campaign": "http://localhost:7703/onx-marketers-campaign.js",
+          "@onx/marketers-dashboard": "http://localhost:7704/onx-marketers-dashboard.js",
+          "@onx/marketers-form-email": "http://localhost:7705/onx-marketers-form-email.js",
+          "@onx/marketers-form-nonhtml": "http://localhost:7706/onx-marketers-form-nonhtml.js",
+          "@onx/marketers-form-campaign": "http://localhost:7707/onx-marketers-from-campaign.js",
+          "@onx/marketers-product": "http://localhost:7708/onx-marketers-product.js",
+          "@onx/marketers-template": "http://localhost:7710/onx-marketers-template.js",
+          "@onx/default-pages": "http://localhost:2001/onx-default-pages.js",
+          "@onx/phone-number": "http://localhost:2008/onx-phone-number.js",
+          "@omnix/root-config": "http://localhost:8000/omnix-root-config.js"
+        }
+      }
+    </script>
+    <!-- Add your organization's prod import map URL to this script's src  -->
+    <!-- For Development -->
+    <!-- <script type="systemjs-importmap" src="<%= process.env.BASE_URL %>/js/importmap-root.development.json"></script> -->
+
+    <!-- For Production -->
+    <!-- <script type="systemjs-importmap" src="<%= process.env.BASE_URL %>/js/importmap-root.production.json"></script> -->
+
+    <!--
+    If you need to support Angular applications, uncomment the script tag below to ensure only one instance of ZoneJS is loaded
+    Learn more about why at https://single-spa.js.org/docs/ecosystem-angular/#zonejs
+  -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/zone.js@0.11.3/dist/zone.min.js"></script> -->
+
+    <script src="<%= process.env.ASSET_URL %>/js/vendors/import-map-overrides.js"></script>
+    <% if (isLocal) { %>
+    <script src="<%= process.env.ASSET_URL %>/js/vendors/system.js"></script>
+    <script src="<%= process.env.ASSET_URL %>/js/vendors/amd.js"></script>
+    <% } else { %>
+    <script src="<%= process.env.ASSET_URL %>/js/vendors/system.min.js"></script>
+    <script src="<%= process.env.ASSET_URL %>/js/vendors/amd.min.js"></script>
+    <% } %>
+  </head>
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <script>
+      System.import("@omnix/root-config");
+    </script>
+    <import-map-overrides-full
+      show-when-local-storage="devtools"
+      dev-libs
+    ></import-map-overrides-full>
+  </body>
+</html>

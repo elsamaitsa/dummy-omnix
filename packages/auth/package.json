@@ -1,0 +1,13 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["pages/*"],
+  "scripts": {
+    "start": "lerna run start --stream",
+    "build": "lerna run build --stream --parallel"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
